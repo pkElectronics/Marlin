@@ -354,8 +354,8 @@
 #define BOARD_FYSETC_S6_V2_0          4218  // FYSETC S6 v2.0 board
 #define BOARD_FLYF407ZG               4219  // FLYF407ZG board (STM32F407ZG)
 #define BOARD_MKS_ROBIN2              4220  // MKS_ROBIN2 (STM32F407ZE)
-#define BOARD_IWB_PROGRESSR2D          4221  // Progress R2 Demo STM32F407VE
-#define BOARD_IWB_PROGRESSR2          4222  // Progress R2 STM32F405VE
+#define BOARD_SIGMOID_S7P          4221  // Progress R2 Demo STM32F407VE
+#define BOARD_SIGMOID_S7P_DEMO          4222  // Progress R2 STM32F405VE
 
 //
 // ARM Cortex M7

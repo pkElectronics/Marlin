@@ -128,7 +128,7 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_IWB_PROGRESSR2D
+  #define MOTHERBOARD BOARD_SIGMOID_S7P_DEMO
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu

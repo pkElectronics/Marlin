@@ -625,8 +625,10 @@
   #include "stm32f4/pins_MKS_ROBIN2.h"          // STM32F4                                env:MKS_ROBIN2
 #elif MB(FYSETC_S6_V2_0)
   #include "stm32f4/pins_FYSETC_S6_V2_0.h"      // STM32F4                                env:FYSETC_S6
-#elif MB(IWB_PROGRESSR2D)
-  #include "stm32f4/pins_IWB_PROGRESSR2D.h"      // STM32F4                                env:IWB_PROGRESSR2D
+#elif MB(SIGMOID_S7P_DEMO)
+  #include "stm32f4/pins_SIGMOID_S7P_DEMO.h"      // STM32F4                                env:SIGMOID_S7P_DEMO
+#elif MB(SIGMOID_S7P)
+  #include "stm32f4/pins_SIGMOID_S7P.h"      // STM32F4                                env:SIGMOID_S7P
 
 //
 // ARM Cortex M7
