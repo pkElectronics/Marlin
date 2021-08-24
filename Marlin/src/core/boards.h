@@ -422,6 +422,12 @@
 #define BOARD_AGCM4_RAMPS_144         6100  // RAMPS 1.4.4
 
 //
+// RaspberryPi
+//
+
+#define BOARD_RP2040_TEST             6200 // Generic RP2040 Test board
+
+//
 // Custom board
 //
 

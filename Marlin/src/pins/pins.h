@@ -682,6 +682,13 @@
   #include "samd/pins_RAMPS_144.h"              // SAMD51                                 env:SAMD51_grandcentral_m4
 
 //
+// RaspberryPi RP2040
+//
+
+#elif MB(RP2040_TEST)
+  #include "rp2040/pins_RP2040_TEST.h"          // RP2040                                 env:RP2040
+
+//
 // Custom board (with custom PIO env)
 //
 
