@@ -21,7 +21,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../inc/MarlinConfigPre.h"
 
@@ -58,4 +58,4 @@ void set_pwm_duty(const pin_t pin, const uint16_t v, const uint16_t v_size/*=255
 }
 
 #endif // NEEDS_HARDWARE_PWM
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

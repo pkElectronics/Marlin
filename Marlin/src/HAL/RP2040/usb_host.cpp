@@ -21,7 +21,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../inc/MarlinConfig.h"
 
@@ -115,4 +115,4 @@ uint8_t BulkStorage::Write(uint8_t lun, uint32_t addr, uint16_t bsize, uint8_t b
 }
 
 #endif // USE_OTG_USB_HOST && USBHOST
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

@@ -21,7 +21,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 /**
  * Platform-independent Arduino functions for I2C EEPROM.
@@ -52,4 +52,4 @@ uint8_t eeprom_read_byte(uint8_t *pos) {
 }
 
 #endif // IIC_BL24CXX_EEPROM
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

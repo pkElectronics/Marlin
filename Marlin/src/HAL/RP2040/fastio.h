@@ -31,7 +31,6 @@
 // Public Variables
 // ------------------------
 
-extern GPIO_TypeDef * FastIOPortMap[];
 
 // ------------------------
 // Public functions
@@ -50,17 +49,10 @@ void FastIO_init(); // Must be called before using fast io macros
   #define PWM OUTPUT
 #endif
 
-#if defined(STM32F0xx) || defined(STM32F1xx) || defined(STM32F3xx) || defined(STM32L0xx) || defined(STM32L4xx)
-  #define _WRITE(IO, V) do { \
-    if (V) FastIOPortMap[STM_PORT(digitalPinToPinName(IO))]->BSRR = _BV32(STM_PIN(digitalPinToPinName(IO))) ; \
-    else   FastIOPortMap[STM_PORT(digitalPinToPinName(IO))]->BRR  = _BV32(STM_PIN(digitalPinToPinName(IO))) ; \
-  }while(0)
-#else
-  #define _WRITE(IO, V) (FastIOPortMap[STM_PORT(digitalPinToPinName(IO))]->BSRR = _BV32(STM_PIN(digitalPinToPinName(IO)) + ((V) ? 0 : 16)))
-#endif
+#define _WRITE(IO, V) digitalWrite((IO), (V))
 
-#define _READ(IO)               bool(READ_BIT(FastIOPortMap[STM_PORT(digitalPinToPinName(IO))]->IDR, _BV32(STM_PIN(digitalPinToPinName(IO)))))
-#define _TOGGLE(IO)             TBI32(FastIOPortMap[STM_PORT(digitalPinToPinName(IO))]->ODR, STM_PIN(digitalPinToPinName(IO)))
+#define _READ(IO)               digitalRead(IO)
+#define _TOGGLE(IO)             digitalWrite(IO, !digitalRead(IO))
 
 #define _GET_MODE(IO)
 #define _SET_MODE(IO,M)         pinMode(IO, M)

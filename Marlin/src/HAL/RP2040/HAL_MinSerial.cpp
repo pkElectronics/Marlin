@@ -22,7 +22,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../inc/MarlinConfigPre.h"
 
@@ -151,4 +151,4 @@ extern "C" {
 #endif
 
 #endif // POSTMORTEM_DEBUGGING
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

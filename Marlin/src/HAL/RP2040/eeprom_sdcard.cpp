@@ -21,7 +21,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 /**
  * Implementation of EEPROM settings in SD Card
@@ -90,4 +90,4 @@ bool PersistentStore::read_data(int &pos, uint8_t *value, const size_t size, uin
 }
 
 #endif // SDCARD_EEPROM_EMULATION
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

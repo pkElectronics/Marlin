@@ -22,7 +22,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "HAL.h"
 #include "usb_serial.h"
@@ -165,4 +165,4 @@ void HAL_SYSTICK_Callback() {
   if (systick_user_callback) systick_user_callback();
 }
 
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

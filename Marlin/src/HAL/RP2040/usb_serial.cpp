@@ -18,7 +18,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../inc/MarlinConfigPre.h"
 
@@ -53,4 +53,4 @@ void USB_Hook_init() {
 }
 
 #endif // EMERGENCY_PARSER && USBD_USE_CDC
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

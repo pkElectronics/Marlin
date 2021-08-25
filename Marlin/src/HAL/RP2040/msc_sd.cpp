@@ -15,7 +15,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../inc/MarlinConfigPre.h"
 
@@ -127,4 +127,4 @@ void MSC_SD_init() {
 }
 
 #endif // HAS_SD_HOST_DRIVE
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

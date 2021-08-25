@@ -21,7 +21,7 @@
  */
 #include "../../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../../inc/MarlinConfig.h"
 
@@ -201,4 +201,4 @@ bool GT911::getPoint(int16_t *x, int16_t *y) {
 }
 
 #endif // TFT_TOUCH_DEVICE_GT911
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

@@ -18,7 +18,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../inc/MarlinConfig.h"
 #include "MarlinSerial.h"
@@ -103,4 +103,4 @@ void MarlinSerial::_rx_complete_irq(serial_t *obj) {
   }
 }
 
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

@@ -22,7 +22,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../inc/MarlinConfig.h"
 
@@ -109,4 +109,4 @@ void libServo::setInterruptPriority(uint32_t preemptPriority, uint32_t subPriori
 }
 
 #endif // HAS_SERVOS
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

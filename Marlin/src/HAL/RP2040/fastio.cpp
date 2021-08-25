@@ -22,15 +22,12 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../inc/MarlinConfig.h"
 
-GPIO_TypeDef* FastIOPortMap[LastPort + 1] = { 0 };
-
 void FastIO_init() {
-  LOOP_L_N(i, NUM_DIGITAL_PINS)
-    FastIOPortMap[STM_PORT(digitalPin[i])] = get_GPIO_Port(STM_PORT(digitalPin[i]));
+
 }
 
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

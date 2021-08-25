@@ -21,7 +21,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../inc/MarlinConfigPre.h"
 
@@ -48,4 +48,4 @@ void HAL_watchdog_refresh() {
 }
 
 #endif // USE_WATCHDOG
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

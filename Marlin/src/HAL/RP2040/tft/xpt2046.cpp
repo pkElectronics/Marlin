@@ -21,7 +21,7 @@
  */
 #include "../../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../../inc/MarlinConfig.h"
 
@@ -169,4 +169,4 @@ uint16_t XPT2046::SoftwareIO(uint16_t data) {
 }
 
 #endif // HAS_TFT_XPT2046
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

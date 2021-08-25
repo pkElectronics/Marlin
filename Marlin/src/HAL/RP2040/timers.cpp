@@ -21,7 +21,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../inc/MarlinConfig.h"
 
@@ -321,4 +321,4 @@ static constexpr bool verify_no_timer_conflicts() {
 // when hovering over it, making it easy to identify the conflicting timers.
 static_assert(verify_no_timer_conflicts(), "One or more timer conflict detected. Examine \"timers_in_use\" to help identify conflict.");
 
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

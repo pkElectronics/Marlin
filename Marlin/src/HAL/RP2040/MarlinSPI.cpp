@@ -21,7 +21,7 @@
  */
 #include "../platforms.h"
 
-#if defined(__PLAT__RP2040__) && !defined(STM32H7xx)
+#if defined(__PLAT_RP2040__) && !defined(STM32H7xx)
 
 #include "MarlinSPI.h"
 
@@ -167,4 +167,4 @@ uint8_t MarlinSPI::dmaSend(const void * transmitBuf, uint16_t length, bool minc)
   return 1;
 }
 
-#endif // __PLAT__RP2040__ && !STM32H7xx
+#endif // __PLAT_RP2040__ && !STM32H7xx

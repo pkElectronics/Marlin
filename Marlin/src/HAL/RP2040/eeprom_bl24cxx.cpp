@@ -21,7 +21,7 @@
  */
 #include "../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 /**
  * PersistentStore for Arduino-style EEPROM interface
@@ -81,4 +81,4 @@ bool PersistentStore::read_data(int &pos, uint8_t *value, size_t size, uint16_t 
 }
 
 #endif // IIC_BL24CXX_EEPROM
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__

@@ -21,7 +21,7 @@
  */
 #include "../../platforms.h"
 
-#ifdef __PLAT__RP2040__
+#ifdef __PLAT_RP2040__
 
 #include "../../../inc/MarlinConfig.h"
 
@@ -170,4 +170,4 @@ void TFT_FSMC::TransmitDMA(uint32_t MemoryIncrease, uint16_t *Data, uint16_t Cou
 }
 
 #endif // HAS_FSMC_TFT
-#endif // __PLAT__RP2040__
+#endif // __PLAT_RP2040__
