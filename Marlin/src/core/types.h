@@ -26,8 +26,10 @@
 
 #include "../inc/MarlinConfigPre.h"
 
-class __FlashStringHelper;
+#ifndef __PLAT_RP2040__
+class __FlashStringHelper; //todo: implement? bad interface
 typedef const __FlashStringHelper *progmem_str;
+#endif
 
 //
 // Conditional type assignment magic. For example...

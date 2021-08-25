@@ -32,16 +32,15 @@
 #include "../../inc/MarlinConfig.h"
 
 #include "watchdog.h"
-#include <IWatchdog.h>
 
 void watchdog_init() {
   #if DISABLED(DISABLE_WATCHDOG_INIT)
-    IWatchdog.begin(WDT_TIMEOUT_US);
+    //IWatchdog.begin(WDT_TIMEOUT_US); //todo: implement
   #endif
 }
 
 void HAL_watchdog_refresh() {
-  IWatchdog.reload();
+  //IWatchdog.reload(); //todo: implement
   #if DISABLED(PINS_DEBUGGING) && PIN_EXISTS(LED)
     TOGGLE(LED_PIN);  // heartbeat indicator
   #endif

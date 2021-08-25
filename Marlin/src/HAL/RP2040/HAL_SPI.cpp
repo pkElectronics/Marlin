@@ -165,9 +165,9 @@ static SPISettings spiConfig;
     }
     spiConfig = SPISettings(clock, MSBFIRST, SPI_MODE0);
 
-    SPI.setMISO(SD_MISO_PIN);
-    SPI.setMOSI(SD_MOSI_PIN);
-    SPI.setSCLK(SD_SCK_PIN);
+    //SPI.setMISO(SD_MISO_PIN); //todo: implement? bad interface
+    //SPI.setMOSI(SD_MOSI_PIN);
+    //SPI.setSCLK(SD_SCK_PIN);
 
     SPI.begin();
   }
@@ -221,7 +221,7 @@ static SPISettings spiConfig;
   void spiSendBlock(uint8_t token, const uint8_t *buf) {
     uint8_t rxBuf[512];
     SPI.transfer(token);
-    SPI.transfer((uint8_t*)buf, &rxBuf, 512);
+    //SPI.transfer((uint8_t*)buf, &rxBuf, 512); //implement? bad interface
   }
 
 #endif // SOFTWARE_SPI

@@ -78,14 +78,14 @@ void HAL_init() {
   #endif
 
   #if ENABLED(SRAM_EEPROM_EMULATION)
-    __HAL_RCC_PWR_CLK_ENABLE();
-    HAL_PWR_EnableBkUpAccess();           // Enable access to backup SRAM
-    __HAL_RCC_BKPSRAM_CLK_ENABLE();
-    LL_PWR_EnableBkUpRegulator();         // Enable backup regulator
-    while (!LL_PWR_IsActiveFlag_BRR());   // Wait until backup regulator is initialized
+    // __HAL_RCC_PWR_CLK_ENABLE();
+    // HAL_PWR_EnableBkUpAccess();           // Enable access to backup SRAM
+    // __HAL_RCC_BKPSRAM_CLK_ENABLE();
+    // LL_PWR_EnableBkUpRegulator();         // Enable backup regulator
+    // while (!LL_PWR_IsActiveFlag_BRR());   // Wait until backup regulator is initialized
   #endif
 
-  SetTimerInterruptPriorities();
+  //SetTimerInterruptPriorities();
 
   #if ENABLED(EMERGENCY_PARSER) && USBD_USE_CDC
     USB_Hook_init();
@@ -106,35 +106,15 @@ void HAL_init() {
 void HAL_idletask() {
   #if HAS_SHARED_MEDIA
     // Stm32duino currently doesn't have a "loop/idle" method
-    CDC_resume_receive();
-    CDC_continue_transmit();
+    // CDC_resume_receive();
+    // CDC_continue_transmit();
   #endif
 }
 
-void HAL_clear_reset_source() { __HAL_RCC_CLEAR_RESET_FLAGS(); }
+void HAL_clear_reset_source() { } // todo: implement
 
-uint8_t HAL_get_reset_source() {
-  return
-    #ifdef RCC_FLAG_IWDGRST // Some sources may not exist...
-      RESET != __HAL_RCC_GET_FLAG(RCC_FLAG_IWDGRST)  ? RST_WATCHDOG :
-    #endif
-    #ifdef RCC_FLAG_IWDG1RST
-      RESET != __HAL_RCC_GET_FLAG(RCC_FLAG_IWDG1RST) ? RST_WATCHDOG :
-    #endif
-    #ifdef RCC_FLAG_IWDG2RST
-      RESET != __HAL_RCC_GET_FLAG(RCC_FLAG_IWDG2RST) ? RST_WATCHDOG :
-    #endif
-    #ifdef RCC_FLAG_SFTRST
-      RESET != __HAL_RCC_GET_FLAG(RCC_FLAG_SFTRST)   ? RST_SOFTWARE :
-    #endif
-    #ifdef RCC_FLAG_PINRST
-      RESET != __HAL_RCC_GET_FLAG(RCC_FLAG_PINRST)   ? RST_EXTERNAL :
-    #endif
-    #ifdef RCC_FLAG_PORRST
-      RESET != __HAL_RCC_GET_FLAG(RCC_FLAG_PORRST)   ? RST_POWER_ON :
-    #endif
-    0
-  ;
+uint8_t HAL_get_reset_source() { //todo: implement
+  return 0;
 }
 
 void HAL_reboot() { NVIC_SystemReset(); }

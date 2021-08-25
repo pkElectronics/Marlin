@@ -26,31 +26,24 @@
 
 #include "../../core/serial_hook.h"
 
-typedef void (*usart_rx_callback_t)(serial_t * obj);
+#define Serial0 Serial
+#define _DECLARE_SERIAL(X) \
+  typedef ForwardSerial1Class<decltype(Serial##X)> DefaultSerial##X; \
+  extern DefaultSerial##X MSerial##X
+#define DECLARE_SERIAL(X) _DECLARE_SERIAL(X)
 
-struct MarlinSerial : public HardwareSerial {
-  MarlinSerial(void *peripheral, usart_rx_callback_t rx_callback) :
-      HardwareSerial(peripheral), _rx_callback(rx_callback)
-  { }
+typedef ForwardSerial1Class<decltype(SerialUSB)> USBSerialType;
+extern USBSerialType USBSerial;
 
-  void begin(unsigned long baud, uint8_t config);
-  inline void begin(unsigned long baud) { begin(baud, SERIAL_8N1); }
+#define _MSERIAL(X) MSerial##X
+#define MSERIAL(X) _MSERIAL(X)
 
-  void _rx_complete_irq(serial_t *obj);
+#if SERIAL_PORT == -1
+  #define MYSERIAL1 USBSerial
+#elif WITHIN(SERIAL_PORT, 0, 3)
+  #define MYSERIAL1 MSERIAL(SERIAL_PORT)
+  DECLARE_SERIAL(SERIAL_PORT);
+#else
+  #error "SERIAL_PORT must be from 0 to 3, or -1 for Native USB."
+#endif
 
-protected:
-  usart_rx_callback_t _rx_callback;
-};
-
-typedef Serial1Class<MarlinSerial> MSerialT;
-extern MSerialT MSerial1;
-extern MSerialT MSerial2;
-extern MSerialT MSerial3;
-extern MSerialT MSerial4;
-extern MSerialT MSerial5;
-extern MSerialT MSerial6;
-extern MSerialT MSerial7;
-extern MSerialT MSerial8;
-extern MSerialT MSerial9;
-extern MSerialT MSerial10;
-extern MSerialT MSerialLP1;
