@@ -25,7 +25,7 @@
 #ifdef __PLAT_RP2040__
 
 #include "HAL.h"
-//#include "usb_serial.h"
+//#include "usb_serial.h" 
 
 #include "../../inc/MarlinConfig.h"
 #include "../shared/Delay.h"
@@ -34,6 +34,7 @@ extern "C"
 {
   #include "pico/bootrom.h"
 }
+#include "hardware/watchdog.h"
 
 
 #ifdef USBCON
@@ -59,7 +60,7 @@ extern "C"
 // Public Variables
 // ------------------------
 
-uint16_t HAL_adc_result;
+volatile uint16_t HAL_adc_result;
 
 // ------------------------
 // Public functions
@@ -91,7 +92,7 @@ void HAL_init() {
     // while (!LL_PWR_IsActiveFlag_BRR());   // Wait until backup regulator is initialized
   #endif
 
-  //SetTimerInterruptPriorities();
+  HAL_timer_init();
 
   #if ENABLED(EMERGENCY_PARSER) && USBD_USE_CDC
     USB_Hook_init();
@@ -117,10 +118,13 @@ void HAL_idletask() {
   #endif
 }
 
-void HAL_clear_reset_source() { } // todo: implement
+void HAL_clear_reset_source() { } // Nothing to do
 
-uint8_t HAL_get_reset_source() { //todo: implement
-  return 0;
+uint8_t HAL_get_reset_source() { 
+  byte result = 0;
+ // if(watchdog_caused_reboot() ) result |= RST_WATCHDOG;
+
+  return result;
 }
 
 void HAL_reboot() { reset_usb_boot(0, 0);}
@@ -135,9 +139,63 @@ extern "C" {
 // ADC
 // ------------------------
 
-// TODO: Make sure this doesn't cause any delay
-void HAL_adc_start_conversion(const uint8_t adc_pin) { HAL_adc_result = analogRead(adc_pin); }
+volatile uint8_t HAL_adc_conversion_state = 0;
+
+void HAL_adc_isr(){
+  adc_run(false); //disable as we only want one result
+  irq_clear(ADC_IRQ_FIFO); //clear the irq
+
+  if (adc_fifo_get_level() >= 1  ){
+    HAL_adc_result = adc_fifo_get(); //pop the result
+    adc_fifo_drain();
+    HAL_adc_conversion_state = 1; //signal the end of the conversion
+  }else {
+  //  hard_assertion_failure(); //fail hard
+  }
+}
+
+void HAL_adc_init() { 
+  analogReadResolution(HAL_ADC_RESOLUTION); 
+  adc_init();
+  adc_fifo_setup(true,false,0,false,false);
+  irq_set_exclusive_handler(ADC_IRQ_FIFO, HAL_adc_isr);
+  adc_irq_set_enabled(true);
+
+}
+
+void HAL_adc_select_pin(const uint8_t adc_pin){
+  if (adc_pin >= A0 && adc_pin <= A3) {
+    adc_gpio_init(adc_pin);
+  }
+  else if (adc_pin == HAL_ADC_MCU_TEMP_DUMMY_PIN) {
+    adc_set_temp_sensor_enabled(true);
+  }
+}
+
+void HAL_adc_start_conversion(const uint8_t adc_pin) { 
+  HAL_adc_conversion_state = 0;
+
+  if (adc_pin != HAL_ADC_MCU_TEMP_DUMMY_PIN){
+    adc_select_input(adc_pin-A0); //ADC Channel is Offset from the GPIO Channel
+  }
+  else {
+    adc_select_input(5);
+  }
+
+  adc_fifo_drain();
+  adc_run(true);
+}
 uint16_t HAL_adc_get_result() { return HAL_adc_result; }
+
+uint8_t HAL_adc_conversion_done(){
+  return HAL_adc_conversion_state;
+}
+
+
+
+
+// ------------------------
+
 
 // Reset the system to initiate a firmware flash
 void flashFirmware(const int16_t) { HAL_reboot(); }

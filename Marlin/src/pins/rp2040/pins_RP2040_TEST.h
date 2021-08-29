@@ -133,9 +133,12 @@
 //
 // Temperature Sensors
 //
-#define TEMP_0_PIN                             A1  // Analog Input
-#define TEMP_1_PIN                             A2  // Analog Input
+#define TEMP_0_PIN                             A0  // Analog Input
+#define TEMP_1_PIN                             A1  // Analog Input
+#define TEMP_2_PIN                             A2  // Analog Input
 #define TEMP_BED_PIN                           A3  // Analog Input
+
+#define TEMP_MCU                              HAL_ADC_MCU_TEMP_DUMMY_PIN // this is a flag value, don´t change
 
 // SPI for MAX Thermocouple
 #if DISABLED(SDSUPPORT)

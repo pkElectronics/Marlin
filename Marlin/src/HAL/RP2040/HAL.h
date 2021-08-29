@@ -134,7 +134,8 @@ typedef int16_t pin_t;
 // ------------------------
 
 // result of last ADC conversion
-extern uint16_t HAL_adc_result;
+extern volatile uint16_t HAL_adc_result;
+extern volatile uint8_t HAL_adc_conversion_state;
 
 // ------------------------
 // Public functions
@@ -174,29 +175,38 @@ static inline int freeMemory() {
 // ADC
 //
 
-#define HAL_ANALOG_SELECT(pin) pinMode(pin, INPUT)
+#define HAL_ANALOG_SELECT(pin) HAL_adc_select_pin(pin)
 
 #define HAL_ADC_VREF         3.3
 #define HAL_ADC_RESOLUTION  ADC_RESOLUTION // 12
 #define HAL_START_ADC(pin)  HAL_adc_start_conversion(pin)
-#define HAL_READ_ADC()      HAL_adc_result
-#define HAL_ADC_READY()     true
+#define HAL_READ_ADC()      HAL_adc_get_result()
+#define HAL_ADC_READY()     HAL_adc_conversion_done()
 
-inline void HAL_adc_init() { analogReadResolution(HAL_ADC_RESOLUTION); }
+#define HAL_ADC_MCU_TEMP_DUMMY_PIN 255
+
+
+
+void HAL_adc_init();
+
+void HAL_adc_select_pin(const uint8_t adc_pin);
 
 void HAL_adc_start_conversion(const uint8_t adc_pin);
 
 uint16_t HAL_adc_get_result();
 
+uint8_t HAL_adc_conversion_done();
+
+
+
+///=============================================================
+
+
 #define GET_PIN_MAP_PIN(index) index
 #define GET_PIN_MAP_INDEX(pin) pin
 #define PARSED_PIN_INDEX(code, dval) parser.intval(code, dval)
 
-#ifdef STM32F1xx
-  #define JTAG_DISABLE() AFIO_DBGAFR_CONFIG(AFIO_MAPR_SWJ_CFG_JTAGDISABLE)
-  #define JTAGSWD_DISABLE() AFIO_DBGAFR_CONFIG(AFIO_MAPR_SWJ_CFG_DISABLE)
-  #define JTAGSWD_RESET() AFIO_DBGAFR_CONFIG(AFIO_MAPR_SWJ_CFG_RESET); // Reset: FULL SWD+JTAG
-#endif
+
 
 #define PLATFORM_M997_SUPPORT
 void flashFirmware(const int16_t);
