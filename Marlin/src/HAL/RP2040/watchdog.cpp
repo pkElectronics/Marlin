@@ -33,14 +33,19 @@
 
 #include "watchdog.h"
 
+extern "C" {
+  #include "hardware/watchdog.h"
+} 
+
 void watchdog_init() {
   #if DISABLED(DISABLE_WATCHDOG_INIT)
-    //IWatchdog.begin(WDT_TIMEOUT_US); //todo: implement
+    static_assert(WDT_TIMEOUT_US > 1000, "WDT Timout is too small, aborting");
+ //   watchdog_enable(WDT_TIMEOUT_US/1000 ,1); //todo: implement
   #endif
 }
 
 void HAL_watchdog_refresh() {
-  //IWatchdog.reload(); //todo: implement
+  watchdog_update();
   #if DISABLED(PINS_DEBUGGING) && PIN_EXISTS(LED)
     TOGGLE(LED_PIN);  // heartbeat indicator
   #endif

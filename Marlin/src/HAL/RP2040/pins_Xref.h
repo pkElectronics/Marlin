@@ -23,6 +23,7 @@
 //
 // make a list of the Arduino pin numbers in the Port/Pin order
 //
+/*
 #ifdef PA0
   PIN_ADD(PA0)
 #endif
@@ -610,3 +611,4 @@
 #ifdef PL15
   PIN_ADD(PL15)
 #endif
+*/

@@ -35,11 +35,6 @@ struct repeating_timer HAL_timer_1;
 struct repeating_timer HAL_timer_2;
 struct repeating_timer HAL_timer_3;
 
-
-//alarm_callback_t HAL_timer_alarm_pool_0_callback(alarm_id_t id, void *user_data);
-//alarm_callback_t HAL_timer_alarm_pool_1_callback(alarm_id_t id, void *user_data);
-//alarm_callback_t HAL_timer_alarm_pool_2_callback(alarm_id_t id, void *user_data);
-//alarm_callback_t HAL_timer_alarm_pool_3_callback(alarm_id_t id, void *user_data);
 int64_t HAL_timer_alarm_pool_0_callback(long int, void*);
 int64_t HAL_timer_alarm_pool_1_callback(long int, void*);
 int64_t HAL_timer_alarm_pool_2_callback(long int, void*);
@@ -50,6 +45,9 @@ bool HAL_timer_repeating_1_callback(repeating_timer* timer);
 bool HAL_timer_repeating_2_callback(repeating_timer* timer);
 bool HAL_timer_repeating_3_callback(repeating_timer* timer);
 
+bool HAL_timer_irq_en[4] = {0,0,0,0};
+
+
 void HAL_timer_init() {
 
   //reserve all the available alarm pools to use as "pseudo" hardware timers
@@ -57,12 +55,16 @@ void HAL_timer_init() {
   HAL_timer_pool_1 = alarm_pool_create(1,6);
   HAL_timer_pool_0 = HAL_timer_pool_1;
   HAL_timer_pool_2 = alarm_pool_create(2,6);
-  HAL_timer_pool_3 = alarm_pool_create(3,6);
+  HAL_timer_pool_3 = HAL_timer_pool_2;
+  //HAL_timer_pool_3 = alarm_pool_create(3,6);
+
+
 
   irq_set_priority(TIMER_IRQ_0,0xC0);
   irq_set_priority(TIMER_IRQ_1,0x80);
   irq_set_priority(TIMER_IRQ_2,0x40);
   irq_set_priority(TIMER_IRQ_3,0x00);
+
 
 
 
@@ -93,7 +95,7 @@ void HAL_timer_start(const uint8_t timer_num, const uint32_t frequency) {
   }
 }
 
-void  HAL_timer_stop(const uint8_t timer_num) {
+void HAL_timer_stop(const uint8_t timer_num) {
    switch (timer_num){
     case 0:
       cancel_repeating_timer(&HAL_timer_0);
@@ -114,42 +116,44 @@ void  HAL_timer_stop(const uint8_t timer_num) {
 }
 
 
-int64_t HAL_timer_alarm_pool_0_callback(long int, void*){
-  HAL_timer_0_callback();
+int64_t HAL_timer_alarm_pool_0_callback(long int, void*) {
+  if(HAL_timer_irq_en[0]) HAL_timer_0_callback();
   return 0;
 }
-int64_t HAL_timer_alarm_pool_1_callback(long int, void*){
-  HAL_timer_1_callback();
+int64_t HAL_timer_alarm_pool_1_callback(long int, void*) {
+  if(HAL_timer_irq_en[1]) HAL_timer_1_callback();
   return 0;
 }
-int64_t HAL_timer_alarm_pool_2_callback(long int, void*){
-  HAL_timer_2_callback();
+int64_t HAL_timer_alarm_pool_2_callback(long int, void*) {
+  if(HAL_timer_irq_en[2]) HAL_timer_2_callback();
   return 0;
 }
-int64_t HAL_timer_alarm_pool_3_callback(long int, void*){
-  HAL_timer_3_callback();
+int64_t HAL_timer_alarm_pool_3_callback(long int, void*) {
+  if(HAL_timer_irq_en[3]) HAL_timer_3_callback();
   return 0;
 }
 
-bool HAL_timer_repeating_0_callback(repeating_timer* timer){
-  HAL_timer_0_callback(); 
+bool HAL_timer_repeating_0_callback(repeating_timer* timer) {
+  if(HAL_timer_irq_en[0]) HAL_timer_0_callback(); 
   return true;
 }
-bool HAL_timer_repeating_1_callback(repeating_timer* timer){
-  HAL_timer_1_callback();
+bool HAL_timer_repeating_1_callback(repeating_timer* timer) {
+  if(HAL_timer_irq_en[1]) HAL_timer_1_callback();
   return true;
 }
-bool HAL_timer_repeating_2_callback(repeating_timer* timer){
-  HAL_timer_2_callback();
+bool HAL_timer_repeating_2_callback(repeating_timer* timer) {
+  if(HAL_timer_irq_en[2]) HAL_timer_2_callback();
   return true;
 }
-bool HAL_timer_repeating_3_callback(repeating_timer* timer){
-  HAL_timer_3_callback();
+bool HAL_timer_repeating_3_callback(repeating_timer* timer) {
+  if(HAL_timer_irq_en[3]) HAL_timer_3_callback();
   return true;
 }
 
-void __attribute__((weak)) HAL_timer_0_callback(){}
-void __attribute__((weak)) HAL_timer_1_callback(){}
-void __attribute__((weak)) HAL_timer_2_callback(){}
-void __attribute__((weak)) HAL_timer_3_callback(){}
+void __attribute__((weak)) HAL_timer_0_callback() {}
+void __attribute__((weak)) HAL_timer_1_callback() {}
+void __attribute__((weak)) HAL_timer_2_callback() {}
+void __attribute__((weak)) HAL_timer_3_callback() {}
+
+
 #endif // __PLAT_RP2040__

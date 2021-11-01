@@ -219,9 +219,9 @@ static SPISettings spiConfig;
    * @details Use DMA
    */
   void spiSendBlock(uint8_t token, const uint8_t *buf) {
-    uint8_t rxBuf[512];
-    SPI.transfer(token);
-    //SPI.transfer((uint8_t*)buf, &rxBuf, 512); //implement? bad interface
+    //uint8_t rxBuf[512];
+    //SPI.transfer(token);
+    SPI.transfer((uint8_t*)buf, 512); //implement? bad interface
   }
 
 #endif // SOFTWARE_SPI

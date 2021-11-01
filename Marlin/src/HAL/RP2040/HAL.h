@@ -47,6 +47,7 @@
   extern DefaultSerial1 MSerial0;
 #endif
 
+
 #define _MSERIAL(X) MSerial##X
 #define MSERIAL(X) _MSERIAL(X)
 

@@ -57,70 +57,52 @@
   #define MARLIN_EEPROM_SIZE              0x1000  // 4KB
 #endif
 
-#define IS_RAMPS_EFB
 
 //
 // Servos
 //
-#ifdef IS_RAMPS_13
-  #define SERVO0_PIN                           7  // RAMPS_13 // Will conflict with BTN_EN2 on LCD_I2C_VIKI
-#else
-  #define SERVO0_PIN                          11
-#endif
-#define SERVO1_PIN                             6
-#define SERVO2_PIN                             5
-#ifndef SERVO3_PIN
-  #define SERVO3_PIN                           4
-#endif
+
+#define SERVO0_PIN                          14
+
 
 //
 // Limit Switches
 //
-#define X_MIN_PIN                              3
-#ifndef X_MAX_PIN
-  #define X_MAX_PIN                            2
-#endif
-#define Y_MIN_PIN                             14
-#define Y_MAX_PIN                             15
-#define Z_MIN_PIN                             18
-#define Z_MAX_PIN                             19
+#define X_MIN_PIN                              13
+#define Y_MIN_PIN                             3
+#define Z_MIN_PIN                             2
 
-//
-// Z Probe (when not Z_MIN_PIN)
-//
-#ifndef Z_MIN_PROBE_PIN
-  #define Z_MIN_PROBE_PIN                     32
-#endif
+
 
 //
 // Steppers
-//
-#define X_STEP_PIN                            1
-#define X_DIR_PIN                             2
-#define X_ENABLE_PIN                          3
+
+#define X_STEP_PIN                            29
+#define X_DIR_PIN                             29
+#define X_ENABLE_PIN                          29
 #ifndef X_CS_PIN
-  #define X_CS_PIN                            4
+  #define X_CS_PIN                            29
 #endif
 
-#define Y_STEP_PIN                            5
-#define Y_DIR_PIN                             6
-#define Y_ENABLE_PIN                          7
+#define Y_STEP_PIN                            29
+#define Y_DIR_PIN                             29
+#define Y_ENABLE_PIN                          29
 #ifndef Y_CS_PIN
-  #define Y_CS_PIN                            8
+  #define Y_CS_PIN                            29
 #endif
 
-#define Z_STEP_PIN                            9
-#define Z_DIR_PIN                             10
-#define Z_ENABLE_PIN                          11
+#define Z_STEP_PIN                            5
+#define Z_DIR_PIN                             4
+#define Z_ENABLE_PIN                          7
 #ifndef Z_CS_PIN
-  #define Z_CS_PIN                            12
+  #define Z_CS_PIN                            4
 #endif
 
-#define E0_STEP_PIN                           13
-#define E0_DIR_PIN                            14
-#define E0_ENABLE_PIN                         15
+#define E0_STEP_PIN                           29
+#define E0_DIR_PIN                            29
+#define E0_ENABLE_PIN                         29
 #ifndef E0_CS_PIN
-  #define E0_CS_PIN                           16
+  #define E0_CS_PIN                           29
 #endif
 
 //#define E1_STEP_PIN                           36
@@ -136,75 +118,37 @@
 #define TEMP_0_PIN                             A0  // Analog Input
 #define TEMP_1_PIN                             A1  // Analog Input
 #define TEMP_2_PIN                             A2  // Analog Input
-#define TEMP_BED_PIN                           A3  // Analog Input
+#define TEMP_BED_PIN                           A1  // Analog Input
 
 #define TEMP_MCU                              HAL_ADC_MCU_TEMP_DUMMY_PIN // this is a flag value, don´t change
 
+#define TEMP_CHAMBER_PIN TEMP_1_PIN
+#define TEMP_BOARD_PIN TEMP_MCU
+
 // SPI for MAX Thermocouple
 #if DISABLED(SDSUPPORT)
-  #define TEMP_0_CS_PIN                       A4  // Don't use 53 if using Display/SD card
+  #define TEMP_0_CS_PIN                       17  // Don't use 53 if using Display/SD card
 #else
   #define TEMP_0_CS_PIN                       17  // Don't use 49 (SD_DETECT_PIN)
 #endif
 
-//
-// Augmentation for auto-assigning RAMPS plugs
-//
-#if NONE(IS_RAMPS_EEB, IS_RAMPS_EEF, IS_RAMPS_EFB, IS_RAMPS_EFF, IS_RAMPS_SF) && !PIN_EXISTS(MOSFET_D)
-  #if HAS_MULTI_HOTEND
-    #if TEMP_SENSOR_BED
-      #define IS_RAMPS_EEB
-    #else
-      #define IS_RAMPS_EEF
-    #endif
-  #elif TEMP_SENSOR_BED
-    #define IS_RAMPS_EFB
-  #else
-    #define IS_RAMPS_EFF
-  #endif
-#endif
 
 //
 // Heaters / Fans
-//
-#ifndef MOSFET_D_PIN
-  #define MOSFET_D_PIN                        -1
-#endif
-#ifndef RAMPS_D8_PIN
-  #define RAMPS_D8_PIN                         8
-#endif
-#ifndef RAMPS_D9_PIN
-  #define RAMPS_D9_PIN                         9
-#endif
-#ifndef RAMPS_D10_PIN
-  #define RAMPS_D10_PIN                       10
+
+
+#define HEATER_0_PIN               24
+
+                                          // Non-specific are "EFB" (i.e., "EFBF" or "EFBE")
+#define FAN_PIN                   23
+#define HEATER_BED_PIN            25
+
+#if HOTENDS == 1 && DISABLED(HEATERS_PARALLEL)
+  #define FAN1_PIN                21
+#else
+  #define HEATER_1_PIN            MOSFET_D_PIN
 #endif
 
-#define HEATER_0_PIN               RAMPS_D10_PIN
-
-#if ENABLED(IS_RAMPS_EFB)                         // Hotend, Fan, Bed
-  #define FAN_PIN                   RAMPS_D9_PIN
-  #define HEATER_BED_PIN            RAMPS_D8_PIN
-#elif ENABLED(IS_RAMPS_EEF)                       // Hotend, Hotend, Fan
-  #define HEATER_1_PIN              RAMPS_D9_PIN
-  #define FAN_PIN                   RAMPS_D8_PIN
-#elif ENABLED(IS_RAMPS_EEB)                       // Hotend, Hotend, Bed
-  #define HEATER_1_PIN              RAMPS_D9_PIN
-  #define HEATER_BED_PIN            RAMPS_D8_PIN
-#elif ENABLED(IS_RAMPS_EFF)                       // Hotend, Fan, Fan
-  #define FAN_PIN                   RAMPS_D9_PIN
-  #define FAN1_PIN                  RAMPS_D8_PIN
-#elif ENABLED(IS_RAMPS_SF)                        // Spindle, Fan
-  #define FAN_PIN                   RAMPS_D8_PIN
-#else                                             // Non-specific are "EFB" (i.e., "EFBF" or "EFBE")
-  #define FAN_PIN                   RAMPS_D9_PIN
-  #define HEATER_BED_PIN            RAMPS_D8_PIN
-  #if HOTENDS == 1 && DISABLED(HEATERS_PARALLEL)
-    #define FAN1_PIN                MOSFET_D_PIN
-  #else
-    #define HEATER_1_PIN            MOSFET_D_PIN
-  #endif
-#endif
 
 #ifndef FAN_PIN
   #define FAN_PIN                              4  // IO pin. Buffer needed
@@ -215,7 +159,7 @@
 //
 #define SDSS                                  20
 //#define LED_PIN                               13
-#define NEOPIXEL_PIN                          18
+#define NEOPIXEL_PIN                          15
 
 #ifndef FILWIDTH_PIN
   #define FILWIDTH_PIN                         5  // Analog Input on AUX2
@@ -292,7 +236,7 @@
   //#define X2_HARDWARE_SERIAL Serial1
   //#define Y_HARDWARE_SERIAL  Serial1
   //#define Y2_HARDWARE_SERIAL Serial1
-  //#define Z_HARDWARE_SERIAL  Serial1
+  //#define Z_HARDWARE_SERIAL MSerial1
   //#define Z2_HARDWARE_SERIAL Serial1
   //#define E0_HARDWARE_SERIAL Serial1
   //#define E1_HARDWARE_SERIAL Serial1
@@ -305,7 +249,7 @@
    */
 
   #ifndef X_SERIAL_TX_PIN
-    #define X_SERIAL_TX_PIN                   40
+    #define X_SERIAL_TX_PIN                   -1
   #endif
   #ifndef X_SERIAL_RX_PIN
     #define X_SERIAL_RX_PIN                   -1
@@ -318,10 +262,10 @@
   #endif
 
   #ifndef Y_SERIAL_TX_PIN
-    #define Y_SERIAL_TX_PIN                   59
+    #define Y_SERIAL_TX_PIN                   -1
   #endif
   #ifndef Y_SERIAL_RX_PIN
-    #define Y_SERIAL_RX_PIN                   64
+    #define Y_SERIAL_RX_PIN                   -1
   #endif
   #ifndef Y2_SERIAL_TX_PIN
     #define Y2_SERIAL_TX_PIN                  -1
@@ -331,10 +275,10 @@
   #endif
 
   #ifndef Z_SERIAL_TX_PIN
-    #define Z_SERIAL_TX_PIN                   42
+    #define Z_SERIAL_TX_PIN                   0
   #endif
   #ifndef Z_SERIAL_RX_PIN
-    #define Z_SERIAL_RX_PIN                   65
+    #define Z_SERIAL_RX_PIN                   0
   #endif
   #ifndef Z2_SERIAL_TX_PIN
     #define Z2_SERIAL_TX_PIN                  -1
@@ -344,10 +288,10 @@
   #endif
 
   #ifndef E0_SERIAL_TX_PIN
-    #define E0_SERIAL_TX_PIN                  44
+    #define E0_SERIAL_TX_PIN                  -1
   #endif
   #ifndef E0_SERIAL_RX_PIN
-    #define E0_SERIAL_RX_PIN                  66
+    #define E0_SERIAL_RX_PIN                  -1
   #endif
   #ifndef E1_SERIAL_TX_PIN
     #define E1_SERIAL_TX_PIN                  -1
@@ -432,7 +376,7 @@
   #ifndef XPT2046_X_CALIBRATION
     #define XPT2046_X_CALIBRATION            63934
   #endif
-  #ifndef XPT2046_Y_CALIBRATION
+  #ifndef XPT2046_Y_CALIBRATION0
     #define XPT2046_Y_CALIBRATION            63598
   #endif
   #ifndef XPT2046_X_OFFSET

@@ -19,6 +19,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "HAL.h"
 
 #ifndef NUM_DIGITAL_PINS
    // Only in ST's Arduino core (STM32duino, STM32Core)
@@ -91,6 +92,8 @@ const XrefInfo pin_xref[] PROGMEM = {
 
 ////////////////////////////////////////////////////////////
 
+#define NUM_ANALOG_FIRST A0
+
 #define MODE_PIN_INPUT  0 // Input mode (reset state)
 #define MODE_PIN_OUTPUT 1 // General purpose output mode
 #define MODE_PIN_ALT    2 // Alternate function mode
@@ -138,18 +141,12 @@ const XrefInfo pin_xref[] PROGMEM = {
 #endif
 
 uint8_t get_pin_mode(const pin_t Ard_num) {
-  const PinName dp = digitalPinToPinName(Ard_num);
-  uint32_t ll_pin  = STM_LL_GPIO_PIN(dp);
-  GPIO_TypeDef *port = get_GPIO_Port(STM_PORT(dp));
-  uint32_t mode = LL_GPIO_GetPinMode(port, ll_pin);
-  switch (mode) {
-    case LL_GPIO_MODE_ANALOG: return MODE_PIN_ANALOG;
-    case LL_GPIO_MODE_INPUT: return MODE_PIN_INPUT;
-    case LL_GPIO_MODE_OUTPUT: return MODE_PIN_OUTPUT;
-    case LL_GPIO_MODE_ALTERNATE: return MODE_PIN_ALT;
-    TERN_(STM32F1xx, case LL_GPIO_MODE_FLOATING:)
-    default: return 0;
-  }
+
+  uint dir = gpio_get_dir( Ard_num);
+
+  if(dir) return MODE_PIN_OUTPUT;
+  else return MODE_PIN_INPUT;
+
 }
 
 bool GET_PINMODE(const pin_t Ard_num) {
@@ -163,16 +160,16 @@ int8_t digital_pin_to_analog_pin(pin_t Ard_num) {
 }
 
 bool IS_ANALOG(const pin_t Ard_num) {
-  return get_pin_mode(Ard_num) == MODE_PIN_ANALOG;
+  return digital_pin_to_analog_pin(Ard_num) != -1;
 }
 
 bool is_digital(const pin_t x) {
-  const uint8_t pin_mode = get_pin_mode(pin_array[x].pin);
+  const uint8_t pin_mode = get_pin_mode(x);
   return pin_mode == MODE_PIN_INPUT || pin_mode == MODE_PIN_OUTPUT;
 }
 
 void port_print(const pin_t Ard_num) {
-  char buffer[16];
+  /*char buffer[16];
   pin_t Index;
   for (Index = 0; Index < NUMBER_PINS_TOTAL; Index++)
     if (Ard_num == GET_PIN_MAP_PIN_M43(Index)) break;
@@ -196,7 +193,11 @@ void port_print(const pin_t Ard_num) {
   sprintf_P(buffer, PSTR(" M42 P%d "), Ard_num);
   SERIAL_ECHO(buffer);
   if (Ard_num < 10) SERIAL_CHAR(' ');
-  if (Ard_num < 100) SERIAL_CHAR(' ');
+  if (Ard_num < 100) SERIAL_CHAR(' ');*/
+
+  SERIAL_ECHOPGM("Pin: ");
+  SERIAL_ECHO(Ard_num);
+
 }
 
 bool pwm_status(const pin_t Ard_num) {
@@ -204,7 +205,7 @@ bool pwm_status(const pin_t Ard_num) {
 }
 
 void pwm_details(const pin_t Ard_num) {
-  #ifndef STM32F1xx
+ /* #ifndef STM32F1xx
     if (pwm_status(Ard_num)) {
       uint32_t alt_all = 0;
       const PinName dp = digitalPinToPinName(Ard_num);
@@ -261,5 +262,5 @@ void pwm_details(const pin_t Ard_num) {
     }
   #else
     // TODO: F1 doesn't support changing pins function, so we need to check the function of the PIN and if it's enabled
-  #endif
+  #endif*/
 } // pwm_details

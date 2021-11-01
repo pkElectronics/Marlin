@@ -30,11 +30,11 @@
 #include "../../inc/MarlinConfig.h"
 #include "../shared/Delay.h"
 
-extern "C"
-{
+extern "C" {
   #include "pico/bootrom.h"
+  #include "hardware/watchdog.h"
 }
-#include "hardware/watchdog.h"
+
 
 
 #ifdef USBCON
@@ -122,12 +122,12 @@ void HAL_clear_reset_source() { } // Nothing to do
 
 uint8_t HAL_get_reset_source() { 
   byte result = 0;
- // if(watchdog_caused_reboot() ) result |= RST_WATCHDOG;
+ if(watchdog_caused_reboot() ) result |= RST_WATCHDOG;
 
   return result;
 }
 
-void HAL_reboot() { reset_usb_boot(0, 0);}
+void HAL_reboot() { reset_usb_boot(0, 0); }
 
 void _delay_ms(const int delay_ms) { delay(delay_ms); }
 
@@ -141,7 +141,7 @@ extern "C" {
 
 volatile uint8_t HAL_adc_conversion_state = 0;
 
-void HAL_adc_isr(){
+void HAL_adc_isr() {
   adc_run(false); //disable as we only want one result
   irq_clear(ADC_IRQ_FIFO); //clear the irq
 
@@ -149,21 +149,20 @@ void HAL_adc_isr(){
     HAL_adc_result = adc_fifo_get(); //pop the result
     adc_fifo_drain();
     HAL_adc_conversion_state = 1; //signal the end of the conversion
-  }else {
-  //  hard_assertion_failure(); //fail hard
   }
 }
 
 void HAL_adc_init() { 
   analogReadResolution(HAL_ADC_RESOLUTION); 
   adc_init();
-  adc_fifo_setup(true,false,0,false,false);
+  adc_fifo_setup(true,false,1,false,false);
   irq_set_exclusive_handler(ADC_IRQ_FIFO, HAL_adc_isr);
+  irq_set_enabled(ADC_IRQ_FIFO, true);
   adc_irq_set_enabled(true);
 
 }
 
-void HAL_adc_select_pin(const uint8_t adc_pin){
+void HAL_adc_select_pin(const uint8_t adc_pin) {
   if (adc_pin >= A0 && adc_pin <= A3) {
     adc_gpio_init(adc_pin);
   }
@@ -179,20 +178,17 @@ void HAL_adc_start_conversion(const uint8_t adc_pin) {
     adc_select_input(adc_pin-A0); //ADC Channel is Offset from the GPIO Channel
   }
   else {
-    adc_select_input(5);
+    adc_select_input(4);
   }
-
-  adc_fifo_drain();
+  
+ // adc_fifo_drain();
   adc_run(true);
 }
 uint16_t HAL_adc_get_result() { return HAL_adc_result; }
 
-uint8_t HAL_adc_conversion_done(){
+uint8_t HAL_adc_conversion_done() {
   return HAL_adc_conversion_state;
 }
-
-
-
 
 // ------------------------
 
