@@ -21,9 +21,9 @@
 
 
 typedef uint64_t hal_timer_t;
-#define HAL_TIMER_TYPE_MAX 0xFFFFFFFF
+#define HAL_TIMER_TYPE_MAX 0xFFFFFFFFFFFFFFFF
 
-#define HAL_TIMER_RATE         (1000000)  // fixed value as we use a microsecond timesource
+#define HAL_TIMER_RATE         (1000000ull)  // fixed value as we use a microsecond timesource
 #ifndef STEP_TIMER_NUM
   #define STEP_TIMER_NUM        0  // Timer Index for Stepper
 #endif
@@ -37,10 +37,10 @@ typedef uint64_t hal_timer_t;
   #define PWM_TIMER_NUM         3  // Timer Index for PWM
 #endif
 
-#define TEMP_TIMER_RATE        1000000
+#define TEMP_TIMER_RATE        HAL_TIMER_RATE
 #define TEMP_TIMER_FREQUENCY   1000 // temperature interrupt frequency
 
-#define STEPPER_TIMER_RATE     HAL_TIMER_RATE   // frequency of stepper timer (HAL_TIMER_RATE / STEPPER_TIMER_PRESCALE)
+#define STEPPER_TIMER_RATE     HAL_TIMER_RATE / 10  // 100khz roughly
 #define STEPPER_TIMER_TICKS_PER_US (1) // fixed value as we use a microsecond timesource
 #define STEPPER_TIMER_PRESCALE (1)
 
@@ -71,6 +71,9 @@ extern alarm_pool_t* HAL_timer_pool_1;
 extern alarm_pool_t* HAL_timer_pool_2;
 extern alarm_pool_t* HAL_timer_pool_3;
 
+extern struct repeating_timer HAL_timer_0;
+
+
 extern void HAL_timer_0_callback();
 extern void HAL_timer_1_callback();
 extern void HAL_timer_2_callback();
@@ -81,7 +84,10 @@ extern int64_t HAL_timer_alarm_pool_1_callback(long int, void*);
 extern int64_t HAL_timer_alarm_pool_2_callback(long int, void*);
 extern int64_t HAL_timer_alarm_pool_3_callback(long int, void*);
 
-extern bool HAL_timer_irq_en[4];
+extern bool HAL_timer_repeating_0_callback(repeating_timer* timer);
+
+
+extern volatile bool HAL_timer_irq_en[4];
 
 // ------------------------
 // Public functions
@@ -91,23 +97,31 @@ void HAL_timer_start(const uint8_t timer_num, const uint32_t frequency);
 void HAL_timer_stop(const uint8_t timer_num);
 
 FORCE_INLINE static void HAL_timer_set_compare(const uint8_t timer_num, const hal_timer_t compare) {
- // HAL_timer_stop(timer_num);
+
+  if(timer_num == STEP_TIMER_NUM){
+    if(compare == HAL_TIMER_TYPE_MAX){
+       HAL_timer_stop(timer_num);
+       return;
+    }
+    //alarm_pool_add_repeating_timer_us(HAL_timer_pool_0,compare,HAL_timer_repeating_0_callback, NULL, &HAL_timer_0);
+    //return;
+  }
 
   switch (timer_num) {
     case 0:
-      alarm_pool_add_alarm_at(HAL_timer_pool_0 ,compare , HAL_timer_alarm_pool_0_callback ,0 ,false );
+      alarm_pool_add_alarm_in_us(HAL_timer_pool_0 ,compare , HAL_timer_alarm_pool_0_callback ,0 ,false );
       break;
     
     case 1:
-      alarm_pool_add_alarm_at(HAL_timer_pool_1 ,compare , HAL_timer_alarm_pool_1_callback ,0 ,false );
+      alarm_pool_add_alarm_in_us(HAL_timer_pool_1 ,compare , HAL_timer_alarm_pool_1_callback ,0 ,false );
       break;
 
     case 2:
-      alarm_pool_add_alarm_at(HAL_timer_pool_2 ,compare , HAL_timer_alarm_pool_2_callback ,0 ,false );
+      alarm_pool_add_alarm_in_us(HAL_timer_pool_2 ,compare , HAL_timer_alarm_pool_2_callback ,0 ,false );
       break;
 
     case 3:
-      alarm_pool_add_alarm_at(HAL_timer_pool_3 ,compare , HAL_timer_alarm_pool_3_callback ,0 ,false );
+      alarm_pool_add_alarm_in_us(HAL_timer_pool_3 ,compare , HAL_timer_alarm_pool_3_callback ,0 ,false );
       break;
   }
 }
@@ -117,6 +131,7 @@ FORCE_INLINE static hal_timer_t HAL_timer_get_compare(const uint8_t timer_num) {
 }
 
 FORCE_INLINE static hal_timer_t HAL_timer_get_count(const uint8_t timer_num) {
+  if(timer_num == STEP_TIMER_NUM) return 0ull;
   return time_us_64();
 }
 

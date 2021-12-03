@@ -45,7 +45,7 @@ bool HAL_timer_repeating_1_callback(repeating_timer* timer);
 bool HAL_timer_repeating_2_callback(repeating_timer* timer);
 bool HAL_timer_repeating_3_callback(repeating_timer* timer);
 
-bool HAL_timer_irq_en[4] = {0,0,0,0};
+volatile bool HAL_timer_irq_en[4] = {0,0,0,0};
 
 
 void HAL_timer_init() {
@@ -73,7 +73,7 @@ void HAL_timer_init() {
 
 void HAL_timer_start(const uint8_t timer_num, const uint32_t frequency) {
   int64_t freq = (int64_t) frequency;
-  int64_t us = (1000000ull / freq)*-1ull;
+  int64_t us = (1000000ll / freq)*-1ull;
   bool returnvalue;
   switch (timer_num){
 
