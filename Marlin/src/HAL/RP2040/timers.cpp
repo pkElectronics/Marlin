@@ -73,7 +73,7 @@ void HAL_timer_init() {
 
 void HAL_timer_start(const uint8_t timer_num, const uint32_t frequency) {
   int64_t freq = (int64_t) frequency;
-  int64_t us = (1000000ll / freq)*-1ull;
+  int64_t us = (1000000ll / freq)*-1ll;
   bool returnvalue;
   switch (timer_num){
 

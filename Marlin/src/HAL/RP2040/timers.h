@@ -40,9 +40,9 @@ typedef uint64_t hal_timer_t;
 #define TEMP_TIMER_RATE        HAL_TIMER_RATE
 #define TEMP_TIMER_FREQUENCY   1000 // temperature interrupt frequency
 
-#define STEPPER_TIMER_RATE     HAL_TIMER_RATE / 10  // 100khz roughly
-#define STEPPER_TIMER_TICKS_PER_US (1) // fixed value as we use a microsecond timesource
-#define STEPPER_TIMER_PRESCALE (1)
+#define STEPPER_TIMER_RATE     HAL_TIMER_RATE / 10 // 100khz roughly
+#define STEPPER_TIMER_TICKS_PER_US (0.1) // fixed value as we use a microsecond timesource
+#define STEPPER_TIMER_PRESCALE (10)
 
 #define PULSE_TIMER_RATE       STEPPER_TIMER_RATE   // frequency of pulse timer
 #define PULSE_TIMER_PRESCALE   STEPPER_TIMER_PRESCALE
@@ -96,16 +96,16 @@ void HAL_timer_init();
 void HAL_timer_start(const uint8_t timer_num, const uint32_t frequency);
 void HAL_timer_stop(const uint8_t timer_num);
 
-FORCE_INLINE static void HAL_timer_set_compare(const uint8_t timer_num, const hal_timer_t compare) {
+FORCE_INLINE static void HAL_timer_set_compare(const uint8_t timer_num, hal_timer_t compare) {
 
   if(timer_num == STEP_TIMER_NUM){
     if(compare == HAL_TIMER_TYPE_MAX){
        HAL_timer_stop(timer_num);
        return;
     }
-    //alarm_pool_add_repeating_timer_us(HAL_timer_pool_0,compare,HAL_timer_repeating_0_callback, NULL, &HAL_timer_0);
-    //return;
   }
+
+ compare = compare *10; //Dirty fix, figure out a proper way
 
   switch (timer_num) {
     case 0:
